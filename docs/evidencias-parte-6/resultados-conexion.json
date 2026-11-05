@@ -1,0 +1,122 @@
+[
+  {
+    "cuenta": "laura.fernandez@example.com",
+    "login": "OK",
+    "lecturas": {
+      "perfiles": {
+        "cantidad": 3,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "pacientes": {
+        "cantidad": 5,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "servicios": {
+        "cantidad": 10,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "turnos": {
+        "cantidad": 11,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      }
+    }
+  },
+  {
+    "cuenta": "martin.rios@example.com",
+    "login": "OK",
+    "lecturas": {
+      "perfiles": {
+        "cantidad": 3,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "pacientes": {
+        "cantidad": 5,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "servicios": {
+        "cantidad": 10,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "turnos": {
+        "cantidad": 11,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      }
+    }
+  },
+  {
+    "cuenta": "carla.diaz@example.com",
+    "login": "OK",
+    "lecturas": {
+      "perfiles": {
+        "cantidad": 3,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "pacientes": {
+        "cantidad": 5,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "servicios": {
+        "cantidad": 10,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      },
+      "turnos": {
+        "cantidad": 11,
+        "consultorios": [
+          "c1000000-0000-4000-8000-000000000001"
+        ]
+      }
+    }
+  },
+  {
+    "cuenta": "pablo.mendez@example.com",
+    "login": "OK",
+    "lecturas": {
+      "perfiles": {
+        "cantidad": 1,
+        "consultorios": [
+          "c2000000-0000-4000-8000-000000000002"
+        ]
+      },
+      "pacientes": {
+        "cantidad": 3,
+        "consultorios": [
+          "c2000000-0000-4000-8000-000000000002"
+        ]
+      },
+      "servicios": {
+        "cantidad": 10,
+        "consultorios": [
+          "c2000000-0000-4000-8000-000000000002"
+        ]
+      },
+      "turnos": {
+        "cantidad": 4,
+        "consultorios": [
+          "c2000000-0000-4000-8000-000000000002"
+        ]
+      }
+    }
+  }
+]

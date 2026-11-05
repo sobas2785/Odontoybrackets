@@ -63,3 +63,4 @@ las rutas a la app.
   multi-consultorio, usuarios y roles.
 - [Diccionario de datos](docs/diccionario-de-datos.md)
 - [Estructura del proyecto](docs/estructura-del-proyecto.md) — carpetas y rutas.
+- [Parte 6: implementación, pruebas y evidencias](docs/parte-6-cumplimiento.md) — entrega completa en PDF, historias de usuario, recorrido y capturas.

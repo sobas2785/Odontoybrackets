@@ -1,0 +1,94 @@
+[
+  {
+    "caso": "Contraseña incorrecta",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "invalid_credentials"
+    }
+  },
+  {
+    "caso": "Crear turno ficticio",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 201,
+      "fecha": "2026-11-19",
+      "hora": "10:30"
+    }
+  },
+  {
+    "caso": "Asociación automática",
+    "resultado": "APROBADO",
+    "detalle": {
+      "organizacion_correcta": true,
+      "autor_correcto": true
+    }
+  },
+  {
+    "caso": "Consultar turno guardado",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 200,
+      "registros": 1
+    }
+  },
+  {
+    "caso": "Otro consultorio no ve el turno por ID",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 200,
+      "registros": 0
+    }
+  },
+  {
+    "caso": "Rechazar superposición",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "23P01"
+    }
+  },
+  {
+    "caso": "Falta fecha",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "23502",
+      "mensaje": "null value in column \"fecha\" of relation \"turnos\" violates not-null constraint"
+    }
+  },
+  {
+    "caso": "Paciente de otro consultorio",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "P0001",
+      "mensaje": "El paciente no pertenece a este consultorio."
+    }
+  },
+  {
+    "caso": "Día sin atención",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "P0001",
+      "mensaje": "El consultorio no atiende ese día."
+    }
+  },
+  {
+    "caso": "Horario fuera de atención",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 400,
+      "codigo": "P0001",
+      "mensaje": "El turno tiene que estar dentro del horario de atención (10:30 a 17:00 hs)."
+    }
+  },
+  {
+    "caso": "Limpiar solo turno creado por esta prueba",
+    "resultado": "APROBADO",
+    "detalle": {
+      "http": 200
+    }
+  }
+]

@@ -21,7 +21,7 @@ const tratamiento = ref(null)
 const cargando = ref(true)
 const trabajando = ref(false)
 const errorMensaje = ref('')
-const mensaje = ref('')
+const mensaje = ref(window.history.state?.turnoGuardado === 'editado' ? 'Turno actualizado correctamente.' : '')
 
 const linkWhatsApp = computed(() =>
   turno.value
@@ -79,6 +79,7 @@ async function eliminar() {
 
 <template>
   <main class="contenedor angosto">
+    <p v-if="mensaje" class="mensaje exito" role="status">{{ mensaje }}</p>
     <RouterLink class="volver" :to="volverA">← Volver a la agenda</RouterLink>
 
     <p v-if="cargando" class="vacio">Cargando turno...</p>
@@ -136,7 +137,7 @@ async function eliminar() {
         </div>
       </section>
 
-      <p v-if="mensaje" class="mensaje exito">{{ mensaje }}</p>
+
       <p v-if="errorMensaje" class="mensaje error">{{ errorMensaje }}</p>
 
       <div class="acciones espacio-arriba">

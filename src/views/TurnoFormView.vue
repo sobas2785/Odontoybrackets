@@ -40,8 +40,7 @@ const hora = ref('')
 const notas = ref('')
 
 // Al editar se guarda el horario original para no perderlo de la lista
-const fechaOriginal = ref('')
-const horaOriginal = ref('')
+const horarioOriginal = ref(null)
 
 const horariosLibres = ref([])
 const buscandoHorarios = ref(false)
@@ -51,12 +50,16 @@ const errorMensaje = ref('')
 
 const servicioElegido = computed(() => servicios.value.find((s) => s.id === servicioId.value))
 
+const conservaHorario = computed(() => {
+  const original = horarioOriginal.value
+  return original && fecha.value === original.fecha &&
+    servicioId.value === original.servicio && profesionalId.value === original.profesional
+})
+
 const opcionesHora = computed(() => {
   const opciones = [...horariosLibres.value]
-  const mantenerOriginal =
-    esEdicion && fecha.value === fechaOriginal.value && horaOriginal.value
-  if (mantenerOriginal && !opciones.includes(horaOriginal.value)) {
-    opciones.push(horaOriginal.value)
+  if (conservaHorario.value && !opciones.includes(horarioOriginal.value.hora)) {
+    opciones.push(horarioOriginal.value.hora)
     opciones.sort()
   }
   return opciones
@@ -78,8 +81,10 @@ let numeroBusqueda = 0
 
 async function actualizarHorarios() {
   const numero = ++numeroBusqueda
-  if (!fecha.value || !profesionalId.value || !servicioElegido.value) {
-    horariosLibres.value = []
+  horariosLibres.value = []
+  if (!fecha.value || !profesionalId.value || !servicioElegido.value || fecha.value < hoyISO()) {
+    buscandoHorarios.value = false
+    if (!opcionesHora.value.includes(hora.value)) hora.value = ''
     return
   }
   buscandoHorarios.value = true
@@ -94,7 +99,7 @@ async function actualizarHorarios() {
     horariosLibres.value = libres
     if (!opcionesHora.value.includes(hora.value)) hora.value = ''
   } catch (error) {
-    errorMensaje.value = error.message
+    if (numero === numeroBusqueda) errorMensaje.value = error.message
   } finally {
     if (numero === numeroBusqueda) buscandoHorarios.value = false
   }
@@ -121,9 +126,13 @@ onMounted(async () => {
       servicioId.value = turno.servicio_id
       profesionalId.value = turno.profesional_id
       fecha.value = turno.fecha
-      fechaOriginal.value = turno.fecha
       hora.value = formatearHora(turno.hora_inicio)
-      horaOriginal.value = hora.value
+      horarioOriginal.value = {
+        fecha: turno.fecha,
+        hora: hora.value,
+        servicio: turno.servicio_id,
+        profesional: turno.profesional_id,
+      }
       notas.value = turno.notas ?? ''
     } else {
       if (route.query.pacienteId) paciente.value = await obtenerPaciente(route.query.pacienteId)
@@ -177,6 +186,11 @@ async function guardar() {
     return
   }
 
+  if (buscandoHorarios.value || !opcionesHora.value.includes(hora.value)) {
+    errorMensaje.value = 'Elegí un horario disponible para el servicio y profesional.'
+    return
+  }
+
   const datos = {
     paciente_id: paciente.value.id,
     profesional_id: profesionalId.value,
@@ -190,10 +204,14 @@ async function guardar() {
     guardando.value = true
     if (esEdicion) {
       await actualizarTurno(turnoId, datos)
-      router.push(`/turnos/${turnoId}`)
+      await router.push({ path: `/turnos/${turnoId}`, state: { turnoGuardado: 'editado' } })
     } else {
       await crearTurno(datos)
-      router.push({ path: '/agenda', query: { fecha: fecha.value } })
+      await router.push({
+        path: '/agenda',
+        query: { fecha: fecha.value },
+        state: { turnoGuardado: 'creado' },
+      })
     }
   } catch (error) {
     errorMensaje.value = error.message
@@ -273,7 +291,7 @@ async function guardar() {
           </label>
           <label class="campo">
             <span>Hora</span>
-            <select v-model="hora" :disabled="!opcionesHora.length" required>
+            <select v-model="hora" :disabled="buscandoHorarios || !opcionesHora.length" required>
               <option disabled value="">{{ textoHora }}</option>
               <option v-for="h in opcionesHora" :key="h" :value="h">{{ h }}</option>
             </select>
@@ -295,7 +313,7 @@ async function guardar() {
         <p v-if="errorMensaje" class="mensaje error">{{ errorMensaje }}</p>
 
         <div class="acciones">
-          <button type="submit" class="btn" :disabled="guardando">
+          <button type="submit" class="btn" :disabled="guardando || buscandoHorarios">
             {{ guardando ? 'Guardando...' : esEdicion ? 'Guardar cambios' : 'Confirmar turno' }}
           </button>
         </div>

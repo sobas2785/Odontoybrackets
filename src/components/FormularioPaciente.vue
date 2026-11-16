@@ -1,6 +1,8 @@
 <script setup>
 // Campos del paciente. Se usa en el ABM de pacientes y, en versión
 // reducida, para crear un paciente rápido desde "Nuevo turno".
+import { hoyISO } from '@/utils/fechas'
+
 const datos = defineModel({ type: Object, required: true })
 
 defineProps({
@@ -24,7 +26,7 @@ defineProps({
     <div class="fila-campos">
       <label class="campo">
         <span>DNI</span>
-        <input v-model="datos.dni" type="text" inputmode="numeric" maxlength="10" placeholder="Sin puntos" />
+        <input v-model="datos.dni" type="text" inputmode="numeric" maxlength="8" pattern="[0-9]{7,8}" title="Ingresá 7 u 8 números, sin puntos" placeholder="Sin puntos" />
       </label>
       <label class="campo">
         <span>Teléfono</span>
@@ -36,7 +38,7 @@ defineProps({
       <div class="fila-campos">
         <label class="campo">
           <span>Fecha de nacimiento</span>
-          <input v-model="datos.fecha_nacimiento" type="date" />
+          <input v-model="datos.fecha_nacimiento" type="date" :max="hoyISO()" />
         </label>
         <label class="campo">
           <span>Obra social</span>

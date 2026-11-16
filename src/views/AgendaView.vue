@@ -10,6 +10,7 @@ import { formatearFechaLarga, hoyISO } from '@/utils/fechas'
 
 const route = useRoute()
 const router = useRouter()
+const turnoCreado = window.history.state?.turnoGuardado === 'creado'
 
 // La fecha va en la dirección (/agenda?fecha=2026-10-14) para poder volver al mismo día
 const fecha = computed({
@@ -58,6 +59,7 @@ onMounted(async () => {
 
 <template>
   <main class="contenedor">
+    <p v-if="turnoCreado" class="mensaje exito" role="status">Turno creado correctamente.</p>
     <div class="cabecera-pagina">
       <div>
         <p class="etiqueta-seccion">Agenda del día</p>

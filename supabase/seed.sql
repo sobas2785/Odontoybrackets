@@ -8,7 +8,7 @@
 -- y turnos, para comprobar que las relaciones están bien armadas y que
 -- cada consultorio ve solamente sus propios datos.
 --
--- Usuarios de prueba (todos con la contraseña Prueba1234):
+-- Usuarios de prueba:
 --
 --   Consultorio Dra. Laura Fernández (ortodoncia, plan Profesional en prueba)
 --     laura.fernandez@example.com   admin        (también atiende)
@@ -22,8 +22,8 @@
 -- domingo, "hoy" pasa a ser el lunes siguiente) para que la agenda tenga
 -- datos apenas se inicia sesión.
 --
--- ⚠ Son cuentas con contraseña conocida y el repositorio es público:
---   borralas cuando el sistema lo use un consultorio real.
+-- Cada cuenta recibe una clave aleatoria. Para habilitar su uso, asignale
+-- una clave de demostracion desde la administracion de Supabase Auth.
 -- =====================================================================
 
 
@@ -108,7 +108,7 @@ begin
       email_change_token_current, email_change
     ) values (
       '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated',
-      u.email, extensions.crypt('Prueba1234', extensions.gen_salt('bf')), now(),
+      u.email, extensions.crypt(encode(extensions.gen_random_bytes(24), 'hex'), extensions.gen_salt('bf')), now(),
       jsonb_build_object('provider', 'email', 'providers', jsonb_build_array('email'),
                          'consultorio_id', u.consultorio_id, 'rol', u.rol),
       jsonb_build_object('nombre', u.nombre, 'apellido', u.apellido),

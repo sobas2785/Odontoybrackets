@@ -33,7 +33,9 @@ agenda, pacientes, servicios y tratamientos, separados del resto.
 5. Opcional para probar más rápido: en **Authentication → Sign In / Providers →
    Email** desactivar *Confirm email*. Así, al registrarse, se entra directo.
 
-Los usuarios de prueba y su contraseña están en el encabezado de `seed.sql`.
+Los usuarios ficticios están en el encabezado de `seed.sql`. El script genera
+una contraseña aleatoria por cuenta. Para usar esas cuentas en la demo,
+asignales contraseñas desde Supabase Auth y compartilas por privado.
 
 ### 2. Aplicación
 

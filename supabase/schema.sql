@@ -521,12 +521,30 @@ create policy "Miembros ven los turnos"
 
 create policy "Miembros cargan turnos"
   on public.turnos for insert to authenticated
-  with check (consultorio_id = (select public.mi_consultorio_id()));
+  with check (
+    consultorio_id = (select public.mi_consultorio_id())
+      and (
+        (select public.mi_rol()) in ('admin', 'recepcion')
+        or ((select public.mi_rol()) = 'profesional' and profesional_id = (select auth.uid()))
+      )
+  );
 
 create policy "Miembros modifican turnos"
   on public.turnos for update to authenticated
-  using (consultorio_id = (select public.mi_consultorio_id()))
-  with check (consultorio_id = (select public.mi_consultorio_id()));
+  using (
+    consultorio_id = (select public.mi_consultorio_id())
+      and (
+        (select public.mi_rol()) in ('admin', 'recepcion')
+        or ((select public.mi_rol()) = 'profesional' and profesional_id = (select auth.uid()))
+      )
+  )
+  with check (
+    consultorio_id = (select public.mi_consultorio_id())
+      and (
+        (select public.mi_rol()) in ('admin', 'recepcion')
+        or ((select public.mi_rol()) = 'profesional' and profesional_id = (select auth.uid()))
+      )
+  );
 
 create policy "El admin elimina turnos"
   on public.turnos for delete to authenticated

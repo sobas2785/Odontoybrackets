@@ -10,7 +10,11 @@ import { formatearFechaLarga, hoyISO } from '@/utils/fechas'
 
 const route = useRoute()
 const router = useRouter()
-const turnoCreado = window.history.state?.turnoGuardado === 'creado'
+const avisosGuardado = {
+  creado: 'Turno creado correctamente.',
+  eliminado: 'Turno eliminado correctamente.',
+}
+const mensajeGuardado = avisosGuardado[window.history.state?.turnoGuardado]
 
 // La fecha va en la dirección (/agenda?fecha=2026-10-14) para poder volver al mismo día
 const fecha = computed({
@@ -26,6 +30,7 @@ const profesionalElegido = computed({
 const turnos = ref([])
 const profesionales = ref([])
 const mostrarCancelados = ref(false)
+const ordenHora = ref('asc')
 const cargando = ref(true)
 const errorMensaje = ref('')
 
@@ -33,13 +38,14 @@ const titulo = computed(() =>
   fecha.value === hoyISO() ? `Hoy, ${formatearFechaLarga(fecha.value)}` : formatearFechaLarga(fecha.value),
 )
 
-const turnosVisibles = computed(() =>
-  turnos.value.filter(
+const turnosVisibles = computed(() => {
+  const visibles = turnos.value.filter(
     (turno) =>
       (mostrarCancelados.value || turno.estado !== 'cancelado') &&
       (!profesionalElegido.value || turno.profesional_id === profesionalElegido.value),
-  ),
-)
+  )
+  return ordenHora.value === 'desc' ? visibles.reverse() : visibles
+})
 
 const cantidadCancelados = computed(() => turnos.value.filter((t) => t.estado === 'cancelado').length)
 
@@ -59,7 +65,7 @@ onMounted(async () => {
 
 <template>
   <main class="contenedor">
-    <p v-if="turnoCreado" class="mensaje exito" role="status">Turno creado correctamente.</p>
+    <p v-if="mensajeGuardado" class="mensaje exito" role="status">{{ mensajeGuardado }}</p>
     <div class="cabecera-pagina">
       <div>
         <p class="etiqueta-seccion">Agenda del día</p>
@@ -69,6 +75,13 @@ onMounted(async () => {
     </div>
 
     <div class="filtros">
+      <label class="campo-filtro">
+        <span>Orden por hora</span>
+        <select v-model="ordenHora">
+          <option value="asc">Más temprano primero</option>
+          <option value="desc">Más tarde primero</option>
+        </select>
+      </label>
       <label v-if="profesionales.length > 1" class="campo-filtro">
         <span>Profesional</span>
         <select v-model="profesionalElegido">

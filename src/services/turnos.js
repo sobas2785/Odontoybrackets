@@ -59,6 +59,12 @@ function limpiarDatos(datos) {
   }
 }
 
+export function puedeGestionarTurno(profesionalId) {
+  const perfil = sesion.perfil
+  return perfil?.rol === 'admin' || perfil?.rol === 'recepcion' ||
+    (perfil?.rol === 'profesional' && perfil.id === profesionalId)
+}
+
 export async function crearTurno(datos) {
   return resolver(supabase.from('turnos').insert(limpiarDatos(datos)).select().single())
 }
@@ -71,11 +77,11 @@ export async function actualizarTurno(id, datos) {
 
 // Cancelar no borra: cambia el estado y así queda el historial
 export async function cambiarEstadoTurno(id, estado) {
-  return resolver(supabase.from('turnos').update({ estado }).eq('id', id))
+  return resolver(supabase.from('turnos').update({ estado }).eq('id', id).select('id').single())
 }
 
 export async function eliminarTurno(id) {
-  return resolver(supabase.from('turnos').delete().eq('id', id))
+  return resolver(supabase.from('turnos').delete().eq('id', id).select('id').single())
 }
 
 export function atiendeEseDia(fecha, consultorio = sesion.consultorio) {

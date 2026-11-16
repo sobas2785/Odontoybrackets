@@ -26,11 +26,13 @@ supabase.auth.onAuthStateChange((evento) => {
 })
 
 export async function cargarSesion(forzar = false) {
-  if (sesion.cargada && !forzar) return sesion
 
   const {
     data: { session },
   } = await supabase.auth.getSession()
+  if (session && sesion.cargada && !forzar && sesion.usuario?.id === session.user.id) {
+    return sesion
+  }
 
   if (!session) {
     limpiarSesion()

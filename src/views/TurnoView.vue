@@ -10,6 +10,7 @@ import {
   eliminarTurno,
   linkRecordatorioWhatsApp,
   obtenerTurno,
+  puedeGestionarTurno,
 } from '@/services/turnos'
 import { formatearFecha, formatearFechaLarga, formatearHora } from '@/utils/fechas'
 
@@ -29,6 +30,8 @@ const linkWhatsApp = computed(() =>
     : null,
 )
 
+const puedeGestionar = computed(() => puedeGestionarTurno(turno.value?.profesional_id))
+
 const volverA = computed(() => ({ path: '/agenda', query: { fecha: turno.value?.fecha } }))
 
 async function cargar() {
@@ -47,6 +50,7 @@ onMounted(async () => {
 })
 
 async function cambiarEstado(estado, textoExito) {
+  if (!puedeGestionar.value || trabajando.value) return
   if (estado === 'cancelado' && !window.confirm('¿Querés cancelar este turno? El horario queda libre.')) {
     return
   }
@@ -65,13 +69,17 @@ async function cambiarEstado(estado, textoExito) {
 }
 
 async function eliminar() {
-  if (!window.confirm('¿Eliminar el turno definitivamente? Normalmente conviene cancelarlo.')) return
+  if (!tieneRol('admin') || trabajando.value) return
+  if (!window.confirm('¿Eliminar el turno definitivamente? Esta acción no se puede deshacer.')) return
+  errorMensaje.value = ''
+  mensaje.value = ''
   try {
     trabajando.value = true
     await eliminarTurno(turno.value.id)
-    router.push(volverA.value)
+    await router.push({ ...volverA.value, state: { turnoGuardado: 'eliminado' } })
   } catch (error) {
     errorMensaje.value = error.message
+  } finally {
     trabajando.value = false
   }
 }
@@ -140,7 +148,7 @@ async function eliminar() {
 
       <p v-if="errorMensaje" class="mensaje error">{{ errorMensaje }}</p>
 
-      <div class="acciones espacio-arriba">
+      <div v-if="puedeGestionar" class="acciones espacio-arriba">
         <template v-if="['pendiente', 'confirmado'].includes(turno.estado)">
           <button
             v-if="turno.estado === 'pendiente'"

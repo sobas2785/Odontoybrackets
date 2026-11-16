@@ -14,6 +14,7 @@ import {
   buscarHorariosLibres,
   crearTurno,
   obtenerTurno,
+  puedeGestionarTurno,
 } from '@/services/turnos'
 import { formatearHora, hoyISO } from '@/utils/fechas'
 
@@ -46,6 +47,7 @@ const horariosLibres = ref([])
 const buscandoHorarios = ref(false)
 const cargando = ref(true)
 const guardando = ref(false)
+const puedeEditar = ref(!esEdicion)
 const errorMensaje = ref('')
 
 const servicioElegido = computed(() => servicios.value.find((s) => s.id === servicioId.value))
@@ -114,8 +116,15 @@ onMounted(async () => {
       listarProfesionales(),
     ])
 
+    profesionales.value = profesionales.value.filter((p) => puedeGestionarTurno(p.id))
+
     if (esEdicion) {
       const turno = await obtenerTurno(turnoId)
+      puedeEditar.value = puedeGestionarTurno(turno.profesional_id)
+      if (!puedeEditar.value) {
+        errorMensaje.value = 'No tenés permiso para modificar este turno.'
+        return
+      }
       // Si el servicio o el profesional del turno ya no están activos, igual se muestran
       if (!servicios.value.some((s) => s.id === turno.servicio_id)) servicios.value.push(turno.servicio)
       if (!profesionales.value.some((p) => p.id === turno.profesional_id)) {
@@ -175,7 +184,12 @@ async function guardarPacienteNuevo() {
 }
 
 async function guardar() {
+  if (guardando.value) return
   errorMensaje.value = ''
+  if (!puedeEditar.value || (profesionalId.value && !puedeGestionarTurno(profesionalId.value))) {
+    errorMensaje.value = 'No tenés permiso para guardar este turno.'
+    return
+  }
 
   if (!paciente.value) {
     errorMensaje.value = 'Elegí o cargá el paciente del turno.'
@@ -235,6 +249,8 @@ async function guardar() {
     <h1>{{ esEdicion ? 'Editar turno' : 'Nuevo turno' }}</h1>
 
     <p v-if="cargando" class="vacio">Cargando...</p>
+
+    <p v-else-if="!puedeEditar" class="mensaje error" role="alert">{{ errorMensaje }}</p>
 
     <template v-else>
       <section class="tarjeta">
